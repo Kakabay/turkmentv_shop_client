@@ -1,26 +1,29 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { Datum, LotData } from '@/models/lotData.model';
+"use client";
 
-const ShopTable = ({ params }: { params: string }) => {
+import { Datum, LotData } from "@/models/lotData.model";
+import { useEffect, useState } from "react";
+
+interface IProps {
+  params: string;
+}
+const ShopTable = ({ params }: IProps) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [data, setData] = useState<LotData>();
   const [lots, setLots] = useState<Datum[]>([]);
 
+  console.log(params);
+
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        `https://smstv.gov.tm/api/shop/messages-by-code?page=${currentPage}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            unique_code: params,
-          }),
+      const response = await fetch(`https://smstv.gov.tm/api/shop/messages-by-code?page=${currentPage}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          unique_code: params,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -30,7 +33,7 @@ const ShopTable = ({ params }: { params: string }) => {
       setData(data);
       setLots((prevLots) => [...prevLots, ...data.data.lot_sms_messages.data]);
     } catch (error) {
-      console.error('Error fetching data:', error as any);
+      // console.log((error as any).toString());
       // Handle errors as needed
     }
   };
@@ -43,9 +46,7 @@ const ShopTable = ({ params }: { params: string }) => {
 
   return (
     <div className="flex items-center flex-col gap-[40px] ">
-      <h1 className="text-[60px] leading-[100%] text-textBlack font-bold text-center max-w-[900px] w-full">
-        Username
-      </h1>
+      <h1 className="text-[60px] leading-[100%] text-textBlack font-bold text-center max-w-[900px] w-full">Username</h1>
       <div className="flex flex-col items-end w-full gap-[20px] max-w-[900px]">
         <div className="flex flex-col items-end w-full gap-[10px]">
           <div className="table_sort flex items-center gap-[10px]">
@@ -131,7 +132,8 @@ const ShopTable = ({ params }: { params: string }) => {
         </div> */}
         <button
           className="p-[20px] w-full text-white text-[18px] text-medium leading-[125%] bg-fillButtonAccentDefault rounded-[25px]"
-          onClick={() => setCurrentPage((prev) => prev + 1)}>
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+        >
           Load more
         </button>
       </div>

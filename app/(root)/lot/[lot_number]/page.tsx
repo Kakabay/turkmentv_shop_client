@@ -1,17 +1,23 @@
-'use client';
-import Container from '@/components/shared/container';
-import ShopTable from '@/components/shop/shopTable';
-import { LotContext } from '@/context/LotContext';
-import LotProvider from '@/providers/LotProvider';
-import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+"use client";
 
-const LotNumber = ({ params }: { params: string }) => {
+import Container from "@/components/shared/container";
+import LotProvider from "@/providers/LotProvider";
+import ShopTable from "@/components/shop/shopTable";
+
+interface IProps {
+  params: IParams;
+}
+
+interface IParams {
+  lot_number: string;
+}
+
+const LotNumber = ({ params }: IProps) => {
   return (
     <main className="mt-[100px]">
       <Container>
         <LotProvider>
-          <ShopTable params={params} />
+          <ShopTable params={params.lot_number} />
         </LotProvider>
       </Container>
     </main>
