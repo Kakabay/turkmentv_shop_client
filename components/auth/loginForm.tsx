@@ -3,8 +3,6 @@
 import React, { useState } from 'react';
 import Input from './input';
 import Button from '../shared/button';
-import { LotData } from '@/models/lotData.model';
-import { LotContext } from '@/context/LotContext';
 
 interface LoginFormProps {
   label: string;
