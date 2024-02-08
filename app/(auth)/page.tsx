@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 export default function Home() {
   const queryClient = new QueryClient();
   return (
-    <main className="h-screen py-6 flex items-center justify-center">
+    <main className="min-h-screen py-6 flex items-center justify-center">
       <Container>
         <div className="flex justify-center items-center">
           <LotProvider>
