@@ -11,8 +11,6 @@ const ShopTable = ({ params }: IProps) => {
   const [data, setData] = useState<LotData>();
   const [lots, setLots] = useState<Datum[]>([]);
 
-  console.log(params);
-
   const fetchData = async () => {
     try {
       const response = await fetch(`https://smstv.gov.tm/api/shop/messages-by-code?page=${currentPage}`, {
@@ -33,7 +31,7 @@ const ShopTable = ({ params }: IProps) => {
       setData(data);
       setLots((prevLots) => [...prevLots, ...data.data.lot_sms_messages.data]);
     } catch (error) {
-      // console.log((error as any).toString());
+      console.error((error as any).toString());
       // Handle errors as needed
     }
   };
