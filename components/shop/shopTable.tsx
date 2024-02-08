@@ -1,9 +1,46 @@
 'use client';
-import { useState } from 'react';
-import Button from '../shared/button';
+import { useEffect, useState } from 'react';
+import { Datum, LotData } from '@/models/lotData.model';
 
-const ShopTable = () => {
-  const [activePage, setActivePage] = useState<number>(1);
+const ShopTable = ({ params }: { params: string }) => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [data, setData] = useState<LotData>();
+  const [lots, setLots] = useState<Datum[]>([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `https://smstv.gov.tm/api/shop/messages-by-code?page=${currentPage}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            unique_code: params,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data: LotData = await response.json();
+      setData(data);
+      setLots((prevLots) => [...prevLots, ...data.data.lot_sms_messages.data]);
+    } catch (error) {
+      console.error('Error fetching data:', error as any);
+      // Handle errors as needed
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [currentPage]);
+
+  console.log(data);
+
   return (
     <div className="flex items-center flex-col gap-[40px] ">
       <h1 className="text-[60px] leading-[100%] text-textBlack font-bold text-center max-w-[900px] w-full">
@@ -92,7 +129,9 @@ const ShopTable = () => {
             </button>
           </div>
         </div> */}
-        <button className="p-[20px] w-full text-white text-[18px] text-medium leading-[125%] bg-fillButtonAccentDefault rounded-[25px]">
+        <button
+          className="p-[20px] w-full text-white text-[18px] text-medium leading-[125%] bg-fillButtonAccentDefault rounded-[25px]"
+          onClick={() => setCurrentPage((prev) => prev + 1)}>
           Load more
         </button>
       </div>
