@@ -3,7 +3,6 @@ import Input from '@/components/auth/input';
 import LoginForm from '@/components/auth/loginForm';
 import Container from '@/components/shared/container';
 import LotProvider from '@/providers/LotProvider';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 export default function Home() {
   return (
