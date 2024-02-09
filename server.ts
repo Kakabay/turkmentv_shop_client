@@ -16,3 +16,7 @@ app.prepare().then(() => {
     console.log('> Ready on http://localhost:3000');
   });
 });
+
+// Increase the defaultMaxListeners for all event emitters
+import * as events from 'events';
+events.EventEmitter.defaultMaxListeners = 10; // or any other desired number
