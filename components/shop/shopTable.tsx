@@ -79,7 +79,7 @@ const ShopTable = ({ params }: IProps) => {
                 Kod
               </span>
               <span className="block text-textBlack py-[20px] px-[24px] w-[180px] text-base leading-[125%] font-semibold">
-                Ugradylan wagty
+                Wagty
               </span>
             </div>
             <div className="table_row_body flex flex-col w-full rounded-b-[25px]">
@@ -121,7 +121,7 @@ const ShopTable = ({ params }: IProps) => {
   ) : err ? (
     <div className="h-full flex  items-center justify-center text-2xl font-semibold text-textDarkt">
       <div className="gap-5 flex flex-col w-[200px] items-center">
-        <p>Lot tapylmady</p>
+        <p>Kod nädogry</p>
         <Button size="small" buttonLink="/">
           Yza
         </Button>
