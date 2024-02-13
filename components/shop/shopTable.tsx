@@ -53,8 +53,6 @@ const ShopTable = ({ params }: IProps) => {
     fetchData();
   }, [currentPage]);
 
-  console.log(lots);
-
   return data?.data && !err ? (
     <div className="flex items-center flex-col gap-[40px] ">
       <h1 className="text-[60px] leading-[100%] text-textBlack font-bold text-center max-w-[900px] w-full">
@@ -62,12 +60,12 @@ const ShopTable = ({ params }: IProps) => {
       </h1>
       <div className="flex flex-col items-end w-full gap-[20px] max-w-[900px]">
         <div className="flex flex-col items-end w-full gap-[10px]">
-          <div className="table_sort flex items-center gap-[10px]">
+          {/* <div className="table_sort flex items-center gap-[10px]">
             <h3 className="text-textLight text-sm">Показать по:</h3>
             <span className="block text-textLight text-sm">10</span>
             <span className="block text-textLight text-sm">50</span>
             <span className="block text-textLight text-sm">100</span>
-          </div>
+          </div> */}
 
           <div className="table_body flex flex-col w-full rounded-[25px] overflow-hidden">
             <div className="table_head flex w-full justify-between bg-fillTableHead border border-b rounded-t-[25px] border-fillTableStrokeTableHead">
@@ -75,13 +73,13 @@ const ShopTable = ({ params }: IProps) => {
                 №
               </span>
               <span className="block text-textBlack py-[20px] px-[24px] w-[200px] text-base leading-[125%] font-semibold">
-                Номер телефона
+                Telefon belgisi
               </span>
               <span className="block text-textBlack py-[20px] px-[24px] w-[230px] text-base leading-[125%] font-semibold">
-                Сообщение
+                Kod
               </span>
               <span className="block text-textBlack py-[20px] px-[24px] w-[180px] text-base leading-[125%] font-semibold">
-                Время отправки
+                Ugradylan wagty
               </span>
             </div>
             <div className="table_row_body flex flex-col w-full rounded-b-[25px]">
@@ -115,7 +113,7 @@ const ShopTable = ({ params }: IProps) => {
           <button
             className="p-[20px] w-full text-white text-[18px] text-medium leading-[125%] bg-fillButtonAccentDefault rounded-[25px]"
             onClick={() => setCurrentPage((prev) => prev + 1)}>
-            Load more
+            Ýenede goş
           </button>
         ) : null}
       </div>
@@ -123,9 +121,9 @@ const ShopTable = ({ params }: IProps) => {
   ) : err ? (
     <div className="h-full flex  items-center justify-center text-2xl font-semibold text-textDarkt">
       <div className="gap-5 flex flex-col w-[200px] items-center">
-        <p>Lot not found</p>
+        <p>Lot tapylmady</p>
         <Button size="small" buttonLink="/">
-          Back
+          Yza
         </Button>
       </div>
     </div>
