@@ -37,7 +37,7 @@ const LoginForm = ({ label, password = false, login = true }: LoginFormProps) =>
             <Input label="Пароль" id="password" placeholder="Введите свой пароль" type="password" />
           ) : null}
         </div>
-        <Button buttonLink={`/lot/${lotNumber}`} size="small">
+        <Button buttonLink={`/lot/${lotNumber}`} size="small" disabled={lotNumber.length != 6}>
           Giriş
         </Button>
       </div>
