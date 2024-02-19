@@ -1,16 +1,17 @@
-'use client';
+"use client";
 
-import { uuid as v4 } from 'uuidv4';
-import { Datum, LotData } from '@/models/lotData.model';
-import { useEffect, useState } from 'react';
-import { dateSplitYear, dateSplitDays } from '@/utils/stringFormaters';
-import Button from '../shared/button';
+import { uuid as v4 } from "uuidv4";
+import { Datum, LotData } from "@/models/lotData.model";
+import { useEffect, useState } from "react";
+import { dateSplitYear, dateSplitDays } from "@/utils/stringFormaters";
+import Button from "../shared/button";
 
 interface IProps {
   params: string;
 }
 const ShopTable = ({ params }: IProps) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [lastPage, setLastPage] = useState<number>(1);
   const [data, setData] = useState<LotData>();
   const [lots, setLots] = useState<Datum[]>([]);
   const [err, setErr] = useState<boolean>(false);
@@ -20,14 +21,14 @@ const ShopTable = ({ params }: IProps) => {
       const response = await fetch(
         `https://smstv.gov.tm/api/shop/messages-by-code?page=${currentPage}`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             unique_code: params,
           }),
-        },
+        }
       );
 
       if (!response.ok) {
@@ -37,10 +38,11 @@ const ShopTable = ({ params }: IProps) => {
       const data: LotData = await response.json();
       setErr(false);
       setData(data);
+      setLastPage(data.data.lot_sms_messages.meta.last_page);
       setLots((prevLots) =>
         currentPage === 1
           ? [...data.data.lot_sms_messages.data]
-          : [...prevLots, ...data.data.lot_sms_messages.data],
+          : [...prevLots, ...data.data.lot_sms_messages.data]
       );
     } catch (error) {
       console.error((error as any).toString());
@@ -86,9 +88,10 @@ const ShopTable = ({ params }: IProps) => {
               {lots.map((lot, index) => (
                 <div
                   className={`table_row flex w-full justify-between ${
-                    index % 2 === 0 ? 'bg-fillTableRow2' : 'bg-fillTableRow'
+                    index % 2 === 0 ? "bg-fillTableRow2" : "bg-fillTableRow"
                   } border border-b border-fillTableStrokeTableRow`}
-                  key={v4()}>
+                  key={v4()}
+                >
                   <span className="block text-textDarkt py-[20px] px-[24px] w-[80px] text-base leading-[125%] font-normal">
                     {index + 1}
                   </span>
@@ -99,8 +102,12 @@ const ShopTable = ({ params }: IProps) => {
                     {lot.msg}
                   </span>
                   <div className="flex flex-col py-[20px] px-[24px] w-[180px]  leading-[125%] font-normal">
-                    <span className="text-textDarkt text-base">{dateSplitYear(lot.dt)}</span>
-                    <span className="text-textLight text-sm">{dateSplitDays(lot.dt)}</span>
+                    <span className="text-textDarkt text-base">
+                      {dateSplitYear(lot.dt)}
+                    </span>
+                    <span className="text-textLight text-sm">
+                      {dateSplitDays(lot.dt)}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -108,11 +115,11 @@ const ShopTable = ({ params }: IProps) => {
           </div>
         </div>
 
-        {data?.data.lot_sms_messages.meta.current_page <
-        data?.data.lot_sms_messages.meta.last_page ? (
+        {currentPage !== lastPage ? (
           <button
             className="p-[20px] w-full text-white text-[18px] text-medium leading-[125%] bg-fillButtonAccentDefault rounded-[25px]"
-            onClick={() => setCurrentPage((prev) => prev + 1)}>
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
             Ýenede goş
           </button>
         ) : null}
