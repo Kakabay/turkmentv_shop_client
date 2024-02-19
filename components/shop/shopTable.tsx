@@ -1,6 +1,6 @@
 "use client";
 
-import { uuid as v4 } from "uuidv4";
+import { v4 } from "uuid";
 import { Datum, LotData } from "@/models/lotData.model";
 import { useEffect, useState } from "react";
 import { dateSplitYear, dateSplitDays } from "@/utils/stringFormaters";
@@ -9,26 +9,41 @@ import Button from "../shared/button";
 interface IProps {
   params: string;
 }
+
 const ShopTable = ({ params }: IProps) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
   const [data, setData] = useState<LotData>();
   const [lots, setLots] = useState<Datum[]>([]);
   const [err, setErr] = useState<boolean>(false);
+  const [dataFilter, setDataFilter] = useState<string>("old");
+  const [dataLoading, setDataLoading] = useState<boolean>(false);
 
   const fetchData = async () => {
+    setDataLoading(true);
     try {
       const response = await fetch(
         `https://smstv.gov.tm/api/shop/messages-by-code?page=${currentPage}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            unique_code: params,
-          }),
-        }
+        dataFilter === "old"
+          ? {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                unique_code: params,
+              }),
+            }
+          : {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                unique_code: params,
+                sort_by_dt_descending: true,
+              }),
+            }
       );
 
       if (!response.ok) {
@@ -44,6 +59,7 @@ const ShopTable = ({ params }: IProps) => {
           ? [...data.data.lot_sms_messages.data]
           : [...prevLots, ...data.data.lot_sms_messages.data]
       );
+      setDataLoading(false);
     } catch (error) {
       console.error((error as any).toString());
       // Handle errors as needed
@@ -53,7 +69,14 @@ const ShopTable = ({ params }: IProps) => {
 
   useEffect(() => {
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, dataFilter]);
+
+  const filterClickHandler = (dataType: string) => {
+    setDataFilter(dataType);
+    setCurrentPage(1);
+  };
+
+  console.log(dataFilter);
 
   return data?.data && !err ? (
     <div className="flex items-center flex-col gap-[40px] ">
@@ -62,12 +85,29 @@ const ShopTable = ({ params }: IProps) => {
       </h1>
       <div className="flex flex-col items-end w-full gap-[20px] max-w-[900px]">
         <div className="flex flex-col items-end w-full gap-[10px]">
-          {/* <div className="table_sort flex items-center gap-[10px]">
-            <h3 className="text-textLight text-sm">Показать по:</h3>
-            <span className="block text-textLight text-sm">10</span>
-            <span className="block text-textLight text-sm">50</span>
-            <span className="block text-textLight text-sm">100</span>
-          </div> */}
+          <div className="table_sort flex items-center gap-[10px]">
+            <h3 className="text-textLight text-sm">Показать:</h3>
+            <button
+              className={`block ${
+                dataFilter === "old"
+                  ? "text-fillLinkActive underline cursor-default pointer-events-none"
+                  : "text-fillLinkRest"
+              } hover:text-fillLinkHover text-sm font-medium cursor-pointer`}
+              onClick={() => filterClickHandler("old")}
+            >
+              Сначало старые
+            </button>
+            <button
+              className={`block ${
+                dataFilter === "new"
+                  ? "text-fillLinkActive underline cursor-default pointer-events-none"
+                  : "text-fillLinkRest"
+              } hover:text-fillLinkHover text-sm font-medium cursor-pointer`}
+              onClick={() => filterClickHandler("new")}
+            >
+              Сначало новые
+            </button>
+          </div>
 
           <div className="table_body flex flex-col w-full rounded-[25px] overflow-hidden">
             <div className="table_head flex w-full justify-between bg-fillTableHead border border-b rounded-t-[25px] border-fillTableStrokeTableHead">
