@@ -17,10 +17,8 @@ const ShopTable = ({ params }: IProps) => {
   const [lots, setLots] = useState<Datum[]>([]);
   const [err, setErr] = useState<boolean>(false);
   const [dataFilter, setDataFilter] = useState<string>("old");
-  const [dataLoading, setDataLoading] = useState<boolean>(false);
 
   const fetchData = async () => {
-    setDataLoading(true);
     try {
       const response = await fetch(
         `https://smstv.gov.tm/api/shop/messages-by-code?page=${currentPage}`,
@@ -59,7 +57,6 @@ const ShopTable = ({ params }: IProps) => {
           ? [...data.data.lot_sms_messages.data]
           : [...prevLots, ...data.data.lot_sms_messages.data]
       );
-      setDataLoading(false);
     } catch (error) {
       console.error((error as any).toString());
       // Handle errors as needed
@@ -76,8 +73,6 @@ const ShopTable = ({ params }: IProps) => {
     setCurrentPage(1);
   };
 
-  console.log(dataFilter);
-
   return data?.data && !err ? (
     <div className="flex items-center flex-col gap-[40px] ">
       <h1 className="text-[60px] leading-[100%] text-textBlack font-bold text-center max-w-[900px] w-full">
@@ -85,27 +80,27 @@ const ShopTable = ({ params }: IProps) => {
       </h1>
       <div className="flex flex-col items-end w-full gap-[20px] max-w-[900px]">
         <div className="flex flex-col items-end w-full gap-[10px]">
-          <div className="table_sort flex items-center gap-[10px]">
-            <h3 className="text-textLight text-sm">Показать:</h3>
+          <div className="table_sort flex gap-[10px] items-center">
+            {/* <h3 className="text-textLight text-sm">Показать:</h3> */}
             <button
-              className={`block ${
+              className={`block px-2 py-1 rounded-md ${
                 dataFilter === "old"
-                  ? "text-fillLinkActive underline cursor-default pointer-events-none"
+                  ? "text-fillLinkActive font-bold cursor-default bg-fillTableHead pointer-events-none"
                   : "text-fillLinkRest"
-              } hover:text-fillLinkHover text-sm font-medium cursor-pointer`}
+              } hover:text-fillLinkHover hover:bg-fillTableHead text-base font-bold cursor-pointer`}
               onClick={() => filterClickHandler("old")}
             >
-              Сначало старые
+              oldest
             </button>
             <button
-              className={`block ${
+              className={`block px-2 py-1 rounded-md ${
                 dataFilter === "new"
-                  ? "text-fillLinkActive underline cursor-default pointer-events-none"
+                  ? "text-fillLinkActive font-bold cursor-default bg-fillTableHead pointer-events-none"
                   : "text-fillLinkRest"
-              } hover:text-fillLinkHover text-sm font-medium cursor-pointer`}
+              } hover:text-fillLinkHover hover:bg-fillTableHead text-base font-bold cursor-pointer`}
               onClick={() => filterClickHandler("new")}
             >
-              Сначало новые
+              newest
             </button>
           </div>
 
@@ -141,7 +136,7 @@ const ShopTable = ({ params }: IProps) => {
                   <span className="block text-textDarkt py-[20px] px-[24px] w-[230px] text-base leading-[125%] font-normal">
                     {lot.msg}
                   </span>
-                  <div className="flex flex-col py-[20px] px-[24px] w-[180px]  leading-[125%] font-normal">
+                  <div className="flex flex-col py-[20px] px-[24px] w-[180px] leading-[125%] font-normal">
                     <span className="text-textDarkt text-base">
                       {dateSplitYear(lot.dt)}
                     </span>
