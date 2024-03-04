@@ -1,8 +1,6 @@
-'use client';
-import Input from '@/components/auth/input';
-import LoginForm from '@/components/auth/loginForm';
-import Container from '@/components/shared/container';
-import LotProvider from '@/providers/LotProvider';
+import LoginForm from "@/components/auth/loginForm";
+import Container from "@/components/shared/container";
+import LotProvider from "@/providers/LotProvider";
 
 export default function Home() {
   return (
@@ -10,7 +8,7 @@ export default function Home() {
       <Container>
         <div className="flex justify-center items-center">
           <LotProvider>
-            <LoginForm label="Öz koduňyzy giriziň" />
+            <LoginForm label="Koduňyzy giriziň" />
           </LotProvider>
         </div>
       </Container>

@@ -1,33 +1,47 @@
-'use client';
+"use client";
 
-import { uuid as v4 } from 'uuidv4';
-import { Datum, LotData } from '@/models/lotData.model';
-import { useEffect, useState } from 'react';
-import { dateSplitYear, dateSplitDays } from '@/utils/stringFormaters';
-import Button from '../shared/button';
+import { v4 } from "uuid";
+import { Datum, LotData } from "@/models/lotData.model";
+import { useEffect, useState } from "react";
+import { dateSplitYear, dateSplitDays } from "@/utils/stringFormaters";
+import Button from "../shared/button";
 
 interface IProps {
   params: string;
 }
+
 const ShopTable = ({ params }: IProps) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [lastPage, setLastPage] = useState<number>(1);
   const [data, setData] = useState<LotData>();
   const [lots, setLots] = useState<Datum[]>([]);
   const [err, setErr] = useState<boolean>(false);
+  const [dataFilter, setDataFilter] = useState<string>("old");
 
   const fetchData = async () => {
     try {
       const response = await fetch(
         `https://smstv.gov.tm/api/shop/messages-by-code?page=${currentPage}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            unique_code: params,
-          }),
-        },
+        dataFilter === "old"
+          ? {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                unique_code: params,
+              }),
+            }
+          : {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                unique_code: params,
+                sort_by_dt_descending: true,
+              }),
+            }
       );
 
       if (!response.ok) {
@@ -37,10 +51,11 @@ const ShopTable = ({ params }: IProps) => {
       const data: LotData = await response.json();
       setErr(false);
       setData(data);
+      setLastPage(data.data.lot_sms_messages.meta.last_page);
       setLots((prevLots) =>
         currentPage === 1
           ? [...data.data.lot_sms_messages.data]
-          : [...prevLots, ...data.data.lot_sms_messages.data],
+          : [...prevLots, ...data.data.lot_sms_messages.data]
       );
     } catch (error) {
       console.error((error as any).toString());
@@ -51,7 +66,12 @@ const ShopTable = ({ params }: IProps) => {
 
   useEffect(() => {
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, dataFilter]);
+
+  const filterClickHandler = (dataType: string) => {
+    setDataFilter(dataType);
+    setCurrentPage(1);
+  };
 
   return data?.data && !err ? (
     <div className="flex items-center flex-col gap-[40px] ">
@@ -60,10 +80,37 @@ const ShopTable = ({ params }: IProps) => {
       </h1>
       <div className="flex flex-col items-end w-full gap-[20px] max-w-[900px]">
         <div className="flex flex-col items-end w-full gap-[10px]">
+<<<<<<< HEAD
           <div className="table_sort flex items-center gap-[10px]">
             <h3 className="text-textLight text-sm">Показать по:</h3>
             <span className="block text-textDarkt text-sm">Сначало старые</span>
             <span className="block text-textLight text-sm">Сначало новые</span>
+          </div>
+=======
+          <div className="table_sort flex gap-[10px] items-center">
+            {/* <h3 className="text-textLight text-sm">Показать:</h3> */}
+            <button
+              className={`block px-2 py-1 rounded-md ${
+                dataFilter === "old"
+                  ? "text-fillLinkActive font-bold cursor-default bg-fillTableHead pointer-events-none"
+                  : "text-fillLinkRest"
+              } hover:text-fillLinkHover hover:bg-fillTableHead text-base font-bold cursor-pointer`}
+              onClick={() => filterClickHandler("old")}
+            >
+              oldest
+            </button>
+            <button
+              className={`block px-2 py-1 rounded-md ${
+                dataFilter === "new"
+                  ? "text-fillLinkActive font-bold cursor-default bg-fillTableHead pointer-events-none"
+                  : "text-fillLinkRest"
+              } hover:text-fillLinkHover hover:bg-fillTableHead text-base font-bold cursor-pointer`}
+              onClick={() => filterClickHandler("new")}
+            >
+              newest
+            </button>
+            </div>
+>>>>>>> c4fbb11dfda6a2631c804c881420ea6bf958afec
           </div>
 
           <div className="table_body flex flex-col w-full rounded-[25px] overflow-hidden">
@@ -85,9 +132,10 @@ const ShopTable = ({ params }: IProps) => {
               {lots.map((lot, index) => (
                 <div
                   className={`table_row flex w-full justify-between ${
-                    index % 2 === 0 ? 'bg-fillTableRow2' : 'bg-fillTableRow'
+                    index % 2 === 0 ? "bg-fillTableRow2" : "bg-fillTableRow"
                   } border border-b border-fillTableStrokeTableRow`}
-                  key={v4()}>
+                  key={v4()}
+                >
                   <span className="block text-textDarkt py-[20px] px-[24px] w-[80px] text-base leading-[125%] font-normal">
                     {index + 1}
                   </span>
@@ -97,9 +145,13 @@ const ShopTable = ({ params }: IProps) => {
                   <span className="block text-textDarkt py-[20px] px-[24px] w-[230px] text-base leading-[125%] font-normal">
                     {lot.msg}
                   </span>
-                  <div className="flex flex-col py-[20px] px-[24px] w-[180px]  leading-[125%] font-normal">
-                    <span className="text-textDarkt text-base">{dateSplitYear(lot.dt)}</span>
-                    <span className="text-textLight text-sm">{dateSplitDays(lot.dt)}</span>
+                  <div className="flex flex-col py-[20px] px-[24px] w-[180px] leading-[125%] font-normal">
+                    <span className="text-textDarkt text-base">
+                      {dateSplitYear(lot.dt)}
+                    </span>
+                    <span className="text-textLight text-sm">
+                      {dateSplitDays(lot.dt)}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -107,11 +159,11 @@ const ShopTable = ({ params }: IProps) => {
           </div>
         </div>
 
-        {data?.data.lot_sms_messages.meta.current_page <
-        data?.data.lot_sms_messages.meta.last_page ? (
+        {currentPage !== lastPage ? (
           <button
             className="p-[20px] w-full text-white text-[18px] text-medium leading-[125%] bg-fillButtonAccentDefault rounded-[25px]"
-            onClick={() => setCurrentPage((prev) => prev + 1)}>
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
             Ýenede goş
           </button>
         ) : null}
