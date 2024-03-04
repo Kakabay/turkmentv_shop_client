@@ -13,10 +13,13 @@ interface IProps {
 const ShopTable = ({ params }: IProps) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(1);
   const [data, setData] = useState<LotData>();
   const [lots, setLots] = useState<Datum[]>([]);
   const [err, setErr] = useState<boolean>(false);
   const [dataFilter, setDataFilter] = useState<string>('old');
+
+  console.log(lots);
 
   const fetchData = async () => {
     try {
@@ -52,6 +55,7 @@ const ShopTable = ({ params }: IProps) => {
       setErr(false);
       setData(data);
       setLastPage(data.data.lot_sms_messages.meta.last_page);
+      setTotalItems(data.data.lot_sms_messages.meta.total);
       setLots((prevLots) =>
         currentPage === 1
           ? [...data.data.lot_sms_messages.data]
@@ -89,7 +93,7 @@ const ShopTable = ({ params }: IProps) => {
                   : 'text-fillLinkRest'
               } hover:text-fillLinkHover hover:bg-fillTableHead text-base font-bold cursor-pointer`}
               onClick={() => filterClickHandler('old')}>
-              oldest
+              Oldest
             </button>
             <button
               className={`block px-2 py-1 rounded-md ${
@@ -98,7 +102,7 @@ const ShopTable = ({ params }: IProps) => {
                   : 'text-fillLinkRest'
               } hover:text-fillLinkHover hover:bg-fillTableHead text-base font-bold cursor-pointer`}
               onClick={() => filterClickHandler('new')}>
-              newest
+              Newest
             </button>
           </div>
 
@@ -118,27 +122,49 @@ const ShopTable = ({ params }: IProps) => {
               </span>
             </div>
             <div className="table_row_body flex flex-col w-full rounded-b-[25px]">
-              {lots.map((lot, index) => (
-                <div
-                  className={`table_row flex w-full justify-between ${
-                    index % 2 === 0 ? 'bg-fillTableRow2' : 'bg-fillTableRow'
-                  } border border-b border-fillTableStrokeTableRow`}
-                  key={v4()}>
-                  <span className="block text-textDarkt py-[20px] px-[24px] w-[80px] text-base leading-[125%] font-normal">
-                    {index + 1}
-                  </span>
-                  <span className="block text-textDarkt py-[20px] px-[24px] w-[200px] text-base leading-[125%] font-normal">
-                    {lot.client}
-                  </span>
-                  <span className="block text-textDarkt py-[20px] px-[24px] w-[230px] text-base leading-[125%] font-normal">
-                    {lot.msg}
-                  </span>
-                  <div className="flex flex-col py-[20px] px-[24px] w-[180px] leading-[125%] font-normal">
-                    <span className="text-textDarkt text-base">{dateSplitYear(lot.dt)}</span>
-                    <span className="text-textLight text-sm">{dateSplitDays(lot.dt)}</span>
+              {lots.map((lot, index) =>
+                dataFilter === 'old' ? (
+                  <div
+                    className={`table_row flex w-full justify-between ${
+                      index % 2 === 0 ? 'bg-fillTableRow2' : 'bg-fillTableRow'
+                    } border border-b border-fillTableStrokeTableRow`}
+                    key={v4()}>
+                    <span className="block text-textDarkt py-[20px] px-[24px] w-[80px] text-base leading-[125%] font-normal">
+                      {index + 1}
+                    </span>
+                    <span className="block text-textDarkt py-[20px] px-[24px] w-[200px] text-base leading-[125%] font-normal">
+                      {lot.client}
+                    </span>
+                    <span className="block text-textDarkt py-[20px] px-[24px] w-[230px] text-base leading-[125%] font-normal">
+                      {lot.msg}
+                    </span>
+                    <div className="flex flex-col py-[20px] px-[24px] w-[180px] leading-[125%] font-normal">
+                      <span className="text-textDarkt text-base">{dateSplitYear(lot.dt)}</span>
+                      <span className="text-textLight text-sm">{dateSplitDays(lot.dt)}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ) : (
+                  <div
+                    className={`table_row flex w-full justify-between ${
+                      index % 2 === 0 ? 'bg-fillTableRow2' : 'bg-fillTableRow'
+                    } border border-b border-fillTableStrokeTableRow`}
+                    key={v4()}>
+                    <span className="block text-textDarkt py-[20px] px-[24px] w-[80px] text-base leading-[125%] font-normal">
+                      {totalItems - index}
+                    </span>
+                    <span className="block text-textDarkt py-[20px] px-[24px] w-[200px] text-base leading-[125%] font-normal">
+                      {lot.client}
+                    </span>
+                    <span className="block text-textDarkt py-[20px] px-[24px] w-[230px] text-base leading-[125%] font-normal">
+                      {lot.msg}
+                    </span>
+                    <div className="flex flex-col py-[20px] px-[24px] w-[180px] leading-[125%] font-normal">
+                      <span className="text-textDarkt text-base">{dateSplitYear(lot.dt)}</span>
+                      <span className="text-textLight text-sm">{dateSplitDays(lot.dt)}</span>
+                    </div>
+                  </div>
+                ),
+              )}
             </div>
           </div>
         </div>
