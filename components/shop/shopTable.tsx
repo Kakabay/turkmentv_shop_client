@@ -60,12 +60,11 @@ const ShopTable = ({ params }: IProps) => {
       </h1>
       <div className="flex flex-col items-end w-full gap-[20px] max-w-[900px]">
         <div className="flex flex-col items-end w-full gap-[10px]">
-          {/* <div className="table_sort flex items-center gap-[10px]">
+          <div className="table_sort flex items-center gap-[10px]">
             <h3 className="text-textLight text-sm">Показать по:</h3>
-            <span className="block text-textLight text-sm">10</span>
-            <span className="block text-textLight text-sm">50</span>
-            <span className="block text-textLight text-sm">100</span>
-          </div> */}
+            <span className="block text-textDarkt text-sm">Сначало старые</span>
+            <span className="block text-textLight text-sm">Сначало новые</span>
+          </div>
 
           <div className="table_body flex flex-col w-full rounded-[25px] overflow-hidden">
             <div className="table_head flex w-full justify-between bg-fillTableHead border border-b rounded-t-[25px] border-fillTableStrokeTableHead">
