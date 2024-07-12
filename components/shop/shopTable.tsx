@@ -66,6 +66,8 @@ const ShopTable = ({ params }: IProps) => {
     setCurrentPage(1);
   };
 
+  console.log(lots);
+
   return data?.data && !err ? (
     <div className="flex items-center flex-col gap-[40px] ">
       <h1 className="text-[60px] leading-[100%] text-textBlack font-bold text-center max-w-[900px] w-full">
@@ -124,8 +126,8 @@ const ShopTable = ({ params }: IProps) => {
                     <span className="block text-textDarkt py-[20px] px-[24px] w-[200px] text-base leading-[125%] font-normal">
                       {lot.client}
                     </span>
-                    <span className="block text-textDarkt py-[20px] px-[24px] w-[230px] text-base leading-[125%] font-normal">
-                      {lot.msg}
+                    <span className="block text-textDarkt py-[20px] px-[24px]  w-[230px] text-base leading-[125%] font-normal">
+                      {lot.msg.toString()}
                     </span>
                     <div className="flex flex-col py-[20px] px-[24px] w-[180px] leading-[125%] font-normal">
                       <span className="text-textDarkt text-base">{dateSplitYear(lot.dt)}</span>
