@@ -66,8 +66,6 @@ const ShopTable = ({ params }: IProps) => {
     setCurrentPage(1);
   };
 
-  console.log(lots);
-
   return data?.data && !err ? (
     <div className="flex items-center flex-col gap-[40px] ">
       <h1 className="text-[60px] leading-[100%] text-textBlack font-bold text-center max-w-[900px] w-full">
