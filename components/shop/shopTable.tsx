@@ -19,6 +19,10 @@ const ShopTable = ({ params }: IProps) => {
   const [err, setErr] = useState<boolean>(false);
   const [dataFilter, setDataFilter] = useState<string>('old');
 
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [smsNumber, setSmsNumber] = useState<string>();
+
   const fetchData = async () => {
     // o5j6hs
     try {
@@ -43,6 +47,7 @@ const ShopTable = ({ params }: IProps) => {
       const data: LotData = await response.json();
       setErr(false);
       setData(data);
+      setSmsNumber(data.data.unique_code);
       setLastPage(data.data.lot_sms_messages.meta.last_page);
       setTotalItems(data.data.lot_sms_messages.meta.total);
       setLots((prevLots) =>
@@ -60,6 +65,82 @@ const ShopTable = ({ params }: IProps) => {
   useEffect(() => {
     fetchData();
   }, [currentPage, dataFilter]);
+
+  useEffect(() => {
+    let socket: WebSocket | null = null;
+    let reconnectTimeout: NodeJS.Timeout | null = null;
+    let pingInterval: NodeJS.Timeout | null = null;
+
+    const connectWebSocket = () => {
+      try {
+        socket = new WebSocket(`wss://sms.turkmentv.gov.tm/ws/quiz?dst=${smsNumber}`);
+        setSocket(socket);
+
+        socket.onopen = () => {
+          console.log('WebSocket is connected');
+          setIsConnected(true);
+
+          pingInterval = setInterval(() => {
+            if (socket?.readyState === WebSocket.OPEN) {
+              try {
+                socket.send(JSON.stringify({ type: 'ping' }));
+              } catch (error) {
+                console.error('Error sending ping:', error);
+              }
+            }
+          }, 25000); // Ping every 25 seconds
+        };
+
+        socket.onmessage = (event) => {
+          try {
+            console.log('Message received from WebSocket:', event.data);
+            const message = JSON.parse(event.data);
+            // handleOnMessage(message);
+          } catch (error) {
+            console.error('Error processing message:', error);
+          }
+        };
+
+        socket.onerror = (error) => {
+          console.error('WebSocket error:', error);
+        };
+
+        socket.onclose = () => {
+          console.log('WebSocket is closed');
+          setIsConnected(false);
+
+          if (pingInterval) {
+            clearInterval(pingInterval);
+          }
+
+          if (!reconnectTimeout) {
+            reconnectTimeout = setTimeout(() => {
+              console.log('Attempting to reconnect WebSocket...');
+              connectWebSocket();
+            }, 5000); // Reconnect after 5 seconds
+          }
+        };
+      } catch (error) {
+        console.error('WebSocket connection error:', error);
+      }
+    };
+
+    if (smsNumber) {
+      connectWebSocket();
+    }
+
+    return () => {
+      if (socket) {
+        socket.close();
+      }
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+    };
+  }, [smsNumber]);
 
   const filterClickHandler = (dataType: string) => {
     setDataFilter(dataType);
